@@ -4,7 +4,7 @@
 CFSPEED_EXEC="./CloudflareSpeedtest"
 OS_TYPE=$(uname)
 ARCH_TYPE=$(uname -m)
-CLOUDFLARE_IP_URL="https://www.cloudflare.com/ips-v4/"
+CLOUDFLARE_IP_URL="https://www.baipiao.eu.org/cloudflare/ips-v4"
 CLOUDFLARE_IP_FILE="Cloudflare.txt"
 CONFIG_FILE="config.conf"
 RESULT_FILE="result.csv"
