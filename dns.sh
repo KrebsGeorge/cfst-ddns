@@ -74,8 +74,6 @@ download_speedtest() {
 # 欢迎界面
 echo "=============================================="
 echo " 欢迎使用 全自动优选工具"
-echo " 博客: https://jhb.ovh"
-echo " Telegram 群组: https://t.me/+ft-zI76oovgwNmRh"
 echo "=============================================="
 # 配置输入函数
 read_configuration() {
