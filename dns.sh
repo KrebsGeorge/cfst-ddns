@@ -101,6 +101,8 @@ read_configuration() {
     DN_COUNT=${DN_COUNT_INPUT:-${DN_COUNT:-10}}
     read -p "请输入地区（默认值: ${CFCOLO:-HKG}）: " CFCOLO_INPUT
     CFCOLO=${CFCOLO_INPUT:-${CFCOLO:-HKG}}
+    read -p "请输入端口（默认值: ${PORT:-443}）: " PORT_INPUT
+    PORT=${PORT_INPUT:-${PORT:-443}}
     
     # 保存配置
     cat <<EOT > "$CONFIG_FILE"
@@ -111,6 +113,7 @@ HOSTNAME="$HOSTNAME"
 SUBDOMAIN="$SUBDOMAIN"
 DN_COUNT="$DN_COUNT"
 CFCOLO="$CFCOLO"
+PORT="$PORT"
 EOT
 }
 
@@ -165,7 +168,7 @@ get_zone_id
 
 # 运行 CloudflareSpeedTest
 echo "运行 CloudflareSpeedTest..."
-"$CFSPEED_EXEC" -dn "$DN_COUNT" -sl 1 -tl 1000 -cfcolo "$CFCOLO" -f "$CLOUDFLARE_IP_FILE"
+"$CFSPEED_EXEC" -dn "$DN_COUNT" -sl 1 -tl 1000 -cfcolo "$CFCOLO" -f "$CLOUDFLARE_IP_FILE" -tp "$PORT"
 if [[ $? -ne 0 ]]; then
     echo "CloudflareSpeedTest 执行失败，请检查执行权限或文件是否正确。"
     exit 1
