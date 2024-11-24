@@ -103,7 +103,8 @@ read_configuration() {
     CFCOLO=${CFCOLO_INPUT:-${CFCOLO:-HKG}}
     read -p "请输入端口（默认值: ${PORT:-443}）: " PORT_INPUT
     PORT=${PORT_INPUT:-${PORT:-443}}
-    
+    read -p "请输入端口（默认值: ${URL:-https://cdn.cloudflare.steamstatic.com/steam/apps/256843155/movie_max.mp4}）: " URL_INPUT
+    URL=${URL_INPUT:-${URL:-https://cdn.cloudflare.steamstatic.com/steam/apps/256843155/movie_max.mp4}}
     # 保存配置
     cat <<EOT > "$CONFIG_FILE"
 AUTH_EMAIL="$AUTH_EMAIL"
@@ -114,6 +115,7 @@ SUBDOMAIN="$SUBDOMAIN"
 DN_COUNT="$DN_COUNT"
 CFCOLO="$CFCOLO"
 PORT="$PORT"
+URL="$URL"
 EOT
 }
 
@@ -168,7 +170,7 @@ get_zone_id
 
 # 运行 CloudflareSpeedTest
 echo "运行 CloudflareSpeedTest..."
-"$CFSPEED_EXEC" -dn "$DN_COUNT" -sl 1 -tl 1000 -cfcolo "$CFCOLO" -f "$CLOUDFLARE_IP_FILE" -tp "$PORT"
+"$CFSPEED_EXEC" -dn "$DN_COUNT" -sl 1 -tl 1000 -cfcolo "$CFCOLO" -f "$CLOUDFLARE_IP_FILE" -tp "$PORT" -url "$URL"
 if [[ $? -ne 0 ]]; then
     echo "CloudflareSpeedTest 执行失败，请检查执行权限或文件是否正确。"
     exit 1
