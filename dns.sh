@@ -43,21 +43,21 @@ download_speedtest() {
     
     if [[ "$OS_TYPE" == "Darwin" ]]; then
         if [[ "$ARCH_TYPE" == "arm64" ]]; then
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_darwin_arm64"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_darwin_arm64"
         else
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_darwin_amd64"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_darwin_amd64"
         fi
     elif [[ "$OS_TYPE" == "Linux" ]]; then
         if [[ "$ARCH_TYPE" == "aarch64" ]]; then
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_linux_arm64"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_linux_arm64"
         else
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_linux_amd64"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_linux_amd64"
         fi
     elif [[ "$OS_TYPE" =~ MINGW|MSYS|CYGWIN ]]; then
         if [[ "$ARCH_TYPE" == "arm64" ]]; then
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_win_arm64.exe"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_win_arm64.exe"
         else
-            DOWNLOAD_URL="https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_win_amd64.exe"
+            DOWNLOAD_URL="https://git.anxin.cf/https://github.com/ShadowObj/CloudflareSpeedTest/releases/download/v2.2.6/CloudflareSpeedtest_win_amd64.exe"
         fi
     else
         echo "不支持的操作系统或架构: $OS_TYPE $ARCH_TYPE"
