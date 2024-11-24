@@ -39,7 +39,7 @@ check_command awk gawk
 
 # 下载 CloudflareSpeedTest 函数
 download_speedtest() {
-    echo "CloudflareSpeedTest 不存在，开始下载..."
+    echo "CloudflareST 不存在，开始下载..."
     
     if [[ "$OS_TYPE" == "Darwin" ]]; then
         if [[ "$ARCH_TYPE" == "arm64" ]]; then
