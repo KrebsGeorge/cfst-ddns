@@ -71,10 +71,12 @@ download_speedtest() {
     fi
     chmod +x "$CFSPEED_EXEC"
 }
+
 # 欢迎界面
 echo "=============================================="
 echo " 欢迎使用 全自动优选工具"
 echo "=============================================="
+
 # 配置输入函数
 read_configuration() {
     read -p "请输入 Cloudflare 账户邮箱 [当前值: ${AUTH_EMAIL:-未设置}]: " AUTH_EMAIL_INPUT
@@ -105,7 +107,9 @@ read_configuration() {
     PORT=${PORT_INPUT:-${PORT:-443}}
     read -p "请输入端口（默认值: ${URL:-https://cdn.cloudflare.steamstatic.com/steam/apps/256843155/movie_max.mp4}）: " URL_INPUT
     URL=${URL_INPUT:-${URL:-https://cdn.cloudflare.steamstatic.com/steam/apps/256843155/movie_max.mp4}}
-    # 保存配置
+    
+    # 保存配置并输出到文件
+    echo "正在保存配置到配置文件：$CONFIG_FILE"
     cat <<EOT > "$CONFIG_FILE"
 AUTH_EMAIL="$AUTH_EMAIL"
 AUTH_KEY="$AUTH_KEY"
@@ -117,6 +121,7 @@ CFCOLO="$CFCOLO"
 PORT="$PORT"
 URL="$URL"
 EOT
+    echo "配置已保存。"
 }
 
 # 获取 Zone ID，首次获取后保存到配置文件
@@ -129,8 +134,6 @@ get_zone_id() {
         
         if [[ -z "$ZONE_ID" || "$ZONE_ID" == "null" ]]; then
           echo "无法获取 Zone ID，请检查域名和认证信息。"
-          echo "这里报错大概率是JQ没有安装根据自己的系统安装即可不会请Google。"
-
           exit 1
         fi
 
@@ -189,25 +192,17 @@ RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID
      -H "X-Auth-Email: ${AUTH_EMAIL}" \
      -H "X-Auth-Key: ${AUTH_KEY}" \
      -H "Content-Type: application/json" | jq -r '.result[0].id')
-if [[ -z "$RECORD_ID" || "$RECORD_ID" == "null" ]]; then
-  echo "无法获取 DNS Record ID，请检查子域名是否存在。"
-  exit 1
-fi
 
 # 更新 DNS 记录
-UPDATE_RESULT=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}" \
+echo "正在更新 DNS 记录..."
+curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}" \
      -H "X-Auth-Email: ${AUTH_EMAIL}" \
      -H "X-Auth-Key: ${AUTH_KEY}" \
      -H "Content-Type: application/json" \
-     --data '{
-       "type": "A",
-       "name": "'"${SUBDOMAIN}"'",
-       "content": "'"${BEST_IP%%:*}"'",
-       "ttl": 120,
-       "proxied": false
-     }' | jq -r '.success')
-if [[ "$UPDATE_RESULT" == "true" ]]; then
-  echo "DNS 记录更新成功：${SUBDOMAIN} -> ${BEST_IP%%:*}"
-else
-  echo "DNS 记录更新失败，请检查日志。"
+     --data '{"type":"A","name":"'"$SUBDOMAIN"'","content":"'"$BEST_IP"'","ttl":120,"proxied":true}'
+if [[ $? -ne 0 ]]; then
+    echo "更新 DNS 记录失败。"
+    exit 1
 fi
+
+echo "DNS 记录更新成功！"
