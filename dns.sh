@@ -192,17 +192,25 @@ RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID
      -H "X-Auth-Email: ${AUTH_EMAIL}" \
      -H "X-Auth-Key: ${AUTH_KEY}" \
      -H "Content-Type: application/json" | jq -r '.result[0].id')
+if [[ -z "$RECORD_ID" || "$RECORD_ID" == "null" ]]; then
+  echo "无法获取 DNS Record ID，请检查子域名是否存在。"
+  exit 1
+fi
 
 # 更新 DNS 记录
-echo "正在更新 DNS 记录..."
-curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}" \
+UPDATE_RESULT=$(curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records/${RECORD_ID}" \
      -H "X-Auth-Email: ${AUTH_EMAIL}" \
      -H "X-Auth-Key: ${AUTH_KEY}" \
      -H "Content-Type: application/json" \
-     --data '{"type":"A","name":"'"$SUBDOMAIN"'","content":"'"$BEST_IP"'","ttl":120,"proxied":true}'
-if [[ $? -ne 0 ]]; then
-    echo "更新 DNS 记录失败。"
-    exit 1
+     --data '{
+       "type": "A",
+       "name": "'"${SUBDOMAIN}"'",
+       "content": "'"${BEST_IP%%:*}"'",
+       "ttl": 120,
+       "proxied": false
+     }' | jq -r '.success')
+if [[ "$UPDATE_RESULT" == "true" ]]; then
+  echo "DNS 记录更新成功：${SUBDOMAIN} -> ${BEST_IP%%:*}"
+else
+  echo "DNS 记录更新失败，请检查日志。"
 fi
-
-echo "DNS 记录更新成功！"
