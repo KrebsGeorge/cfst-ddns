@@ -181,11 +181,23 @@ fi
 echo "CloudflareSpeedTest 任务完成！"
 
 # 找到最快的 IP
-BEST_IP=$(awk -F, 'NR > 1 { if($6 > max) { max = $6; best_ip = $1 }} END { print best_ip }' "$RESULT_FILE")
-if [[ -z "$BEST_IP" ]]; then
-    echo "未找到有效的最佳 IP 地址。"
-    exit 1
-fi
+BEST_IP=$(awk -F, '
+NR > 1 {
+    if ($6 > 0) {
+        # 如果速度 > 0，按速度排序
+        if ($6 > max_speed) {
+            max_speed = $6
+            best_ip = $1
+        }
+    } else if ($6 == 0) {
+        # 如果速度为 0，按延迟排序
+        if (min_latency == "" || $5 < min_latency) {
+            min_latency = $5
+            best_ip = $1
+        }
+    }
+}
+END { print best_ip }' "$RESULT_FILE")
 
 # 获取 DNS Record ID
 RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/dns_records?type=A&name=${SUBDOMAIN}" \
